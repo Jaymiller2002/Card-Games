@@ -2,30 +2,36 @@ import random
 
 class Card: 
     def __init__(self, suit, rank):
+        """Initialize a Card object with a suit and rank."""
         self.suit = suit
         self.rank = rank
 
 
 class Deck:
     def __init__(self, num_decks=1):
+        """Initialize a Deck object with a certain number of decks."""
         suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
         ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
         self.cards = [Card(suit, rank) for _ in range(num_decks) for suit in suits for rank in ranks]
         self.shuffle()
 
     def shuffle(self):
+        """Shuffle the deck."""
         random.shuffle(self.cards)
 
     def deal_card(self):
+        """Deal a card from the deck."""
         return self.cards.pop()
 
 class Player:
     def __init__(self, name, initial_balance=100):
+        """Initialize a Player object with a name and initial balance."""
         self.name = name
         self.balance = initial_balance
         self.hand = []
 
     def place_bet(self, amount):
+        """Place a bet."""
         if amount <= self.balance:
             self.balance -= amount
             return True
@@ -34,14 +40,16 @@ class Player:
             return False
 
     def win(self, amount):
+        """Increment the player's balance when they win."""
         self.balance += amount
 
     def show_hand(self):
+        """Display the player's hand."""
         for card in self.hand:
             print(f"{card.rank} of {card.suit}")
 
-    
 def compare_cards(card1, card2):
+    """Compare two cards and determine the winner."""
     if card1.rank == 'Ace' and card2.rank != 'Ace':
         return 1
     elif card1.rank != 'Ace' and card2.rank == 'Ace':
@@ -52,6 +60,7 @@ def compare_cards(card1, card2):
         return 1 if card1.rank > card2.rank else -1
 
 def play_high_card(player_name, num_decks=1):
+    """Play the High Card game."""
     print("Playing High Card game...")
     player = Player(player_name)
     deck = Deck(num_decks)
@@ -73,6 +82,7 @@ def play_high_card(player_name, num_decks=1):
             break
 
 def play_blackjack(player_name, num_decks=1):
+    """Play the Blackjack game."""
     print("Playing Blackjack game...")
     player = Player(player_name)
     deck = Deck(num_decks)
@@ -143,6 +153,7 @@ def play_blackjack(player_name, num_decks=1):
             break
 
 def get_hand_value(hand):
+    """Calculate the value of a hand in Blackjack."""
     value = 0
     num_aces = 0
     for card in hand:
@@ -159,6 +170,7 @@ def get_hand_value(hand):
     return value
 
 def main():
+    """Main function to start the game."""
     player_name = input("Enter your name: ")
     game_choice = input("Select game (High Card or Blackjack): ").lower()
     num_decks = int(input("Enter number of decks to use: "))
