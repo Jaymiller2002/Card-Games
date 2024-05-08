@@ -24,7 +24,7 @@ class Deck:
         return self.cards.pop()
 
 class Player:
-    def __init__(self, name, initial_balance=100):
+    def __init__(self, name, initial_balance=100000000):
         """Initialize a Player object with a name and initial balance."""
         self.name = name
         self.balance = initial_balance
