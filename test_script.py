@@ -48,6 +48,49 @@ class Player:
         for card in self.hand:
             print(f"{card.rank} of {card.suit}")
 
+class War:
+    def __init__(self, player_name):
+        """Initialize the War game"""
+        self.player = Player(player_name)
+        self.computer = Player("Computer")
+        self.deck = Deck(num_decks=1)
+        self.deck.shuffle()
+        self.player_cards = []
+        self.computer_cards = []
+        self.distribute_cards()
+        self.game_over = False
+        self.rounds_played = 0
+
+    def distribute_cards(self):
+        """Split the deck between the players"""
+        total_cards = len(self.deck.cards)
+        half_cards = total_cards // 2
+        self.player_cards = self.deck.cards[:half_cards]
+        self.computer_cards = self.deck.cards[half_cards:]
+
+    def play_card(self):
+        """Play a card from each player's deck."""
+        player_card = self.player_cards.pop(0)
+        computer_card = self.computer_cards.pop(0)
+        return player_card, computer_card
+
+    def war_round(self):
+        """Play a round of war"""
+        player_card, computer_card = self.play_card()
+        print(f"{self.player.name}'s card: {player_card.rank} of {player_card.suit}")
+        print(f"{self.computer.name}'s card: {compare_card.rank} of {compare_card.suit}")
+        if player_card.rank == computer_card.rank:
+            print("War!")
+            return self.war()
+        elif player_card.rank > computer_card.rank:
+            print(f"{self.player.name} wins the round!")
+            self.player_cards.extend([player_card, compare_card])
+        else:
+            print(f"{self.computer.name} wins the round!")
+            self.computer_cards.extend([player_card, computer_card])
+    
+    
+
 def compare_cards(card1, card2):
     """Compare two cards and determine the winner."""
     if card1.rank == 'Ace' and card2.rank != 'Ace':
