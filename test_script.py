@@ -63,6 +63,80 @@ def compare_cards(card1, card2):
     else:
         return 1 if card1.rank > card2.rank else -1
 
+class War:
+    RED = '\033[91m'  # ANSI escape code for red color
+    RESET = '\033[0m'  # ANSI escape code to reset color
+
+    def __init__(self, player_name):
+        """Initialize the War game."""
+        self.player = Player(player_name)
+        self.computer = Player("Computer")
+        self.deck = Deck(num_decks=1)
+        self.deck.shuffle()
+        self.player_cards = []
+        self.computer_cards = []
+        self.distribute_cards()
+        self.game_over = False
+        self.rounds_played = 0  # Counter for rounds played
+
+    def distribute_cards(self):
+        """Split the deck between the player and the computer."""
+        total_cards = len(self.deck.cards)
+        half_cards = total_cards // 2
+        self.player_cards = self.deck.cards[:half_cards]
+        self.computer_cards = self.deck.cards[half_cards:]
+
+    def play_card(self):
+        """Play a card from each player's deck."""
+        player_card = self.player_cards.pop(0)
+        computer_card = self.computer_cards.pop(0)
+        return player_card, computer_card
+
+    def war_round(self):
+        """Play a round of War."""
+        player_card, computer_card = self.play_card()
+        print(f"{self.RED}{self.player.name}'s card: {player_card.rank} of {player_card.suit}{self.RESET}")
+        print(f"{self.RED}{self.computer.name}'s card: {computer_card.rank} of {computer_card.suit}{self.RESET}")
+        if player_card.rank == computer_card.rank:
+            print(f"{self.RED}War!{self.RESET}")
+            return self.war()
+        elif player_card.rank > computer_card.rank:
+            print(f"{self.RED}{self.player.name} wins the round!{self.RESET}")
+            self.player_cards.extend([player_card, computer_card])
+        else:
+            print(f"{self.RED}{self.computer.name} wins the round!{self.RESET}")
+            self.computer_cards.extend([player_card, computer_card])
+
+    def war(self):
+        """Handle a war scenario."""
+        player_war_cards = [self.player_cards.pop(0) for _ in range(3)]
+        computer_war_cards = [self.computer_cards.pop(0) for _ in range(3)]
+        self.player_cards.extend(player_war_cards)
+        self.computer_cards.extend(computer_war_cards)
+        self.war_round()
+
+    def play(self):
+        """Play the War game until one player has all the cards."""
+        if self.game_over:
+            print("The war game has already ended.")
+            return None
+        
+        while self.player_cards and self.computer_cards:
+            self.war_round()
+            self.rounds_played += 1  # Increment rounds played
+            if self.rounds_played >= 8:  # Check if four rounds have been played
+                print("\033[32mMaximum rounds reached. Ending the game.\033[0m")
+                break
+
+        if not self.player_cards:
+            print(f"{self.RED}{self.computer.name} wins the game!{self.RESET}")
+            winner = self.computer.name
+        else:
+            print(f"{self.RED}{self.player.name} wins the game!{self.RESET}")
+            winner = self.player.name
+
+        self.game_over = True
+        return winner
 
 def play_high_card(player_name, num_decks=1):
     """Play the High Card game."""
@@ -177,12 +251,16 @@ def get_hand_value(hand):
 def main():
     """Main function to start the game."""
     player_name = input("\033[36mEnter your name: \033[0m")
-    game_choice = input("\033[36mSelect game (High Card or Blackjack): \033[0m").lower()
+    game_choice = input("\033[36mSelect game (High Card, Blackjack, or War): \033[0m").lower()
     num_decks = int(input("\033[36mEnter number of decks to use: \033[0m"))
     if game_choice == 'high card':
         play_high_card(player_name, num_decks)
     elif game_choice == 'blackjack':
         play_blackjack(player_name, num_decks)
+    elif game_choice == 'war':
+        war_game = War(player_name)
+        winner = war_game.play()
+        print(f"\033[36mThe winner of the war game is: {winner}\033[0m")
     else: 
         print("\033[36mInvalid game choice!\033[0m") 
 
